@@ -31,28 +31,15 @@ public class GreetingController {
 	private String output, path, result, document;
 	private CubeView cubeView;
 	private String[] years;
-	private List<String> inputYears;
+	private List<String> inputMonths;
 	private String fileName = "statec.xml";
 	private List<JSONDocument> doc;
     private Unmarshaller unmarshaller;
     private File f;
-    private String longDate;
+    private String longDate, month;
 
 	
-//	@GetMapping("/greeting")
-//	public Greeting greeting(@RequestParam(value = "name", defaultValue = "World") String name) throws FileNotFoundException, JAXBException  {
-//		URL resource=this.getClass().getClassLoader().getResource(fileName);
-//		JAXBContext jc = JAXBContext.newInstance(CubeView.class);
-//		unmarshaller = jc.createUnmarshaller();
-//		cubeView = (CubeView) unmarshaller.unmarshal(resource);
-//		inputYears = new ArrayList();
-//		inputYears.add("2015");
-//		document = CreateJsonFromXml(cubeView, inputYears);
-//		name = document; 
-//		
-//		return new Greeting(counter.incrementAndGet(), String.format(template, name));
-//		}
-	
+
 	@GetMapping("/getByMonth")
 	public Greeting getByMonth(@RequestParam String month) throws FileNotFoundException, JAXBException  {
 		URL resource=this.getClass().getClassLoader().getResource(fileName);
@@ -60,22 +47,23 @@ public class GreetingController {
 		unmarshaller = jc.createUnmarshaller();
 		cubeView = (CubeView) unmarshaller.unmarshal(resource);
 		longDate = ComposedDate.YeartoYearMonth(month);
-		document = CreateJsonFromXml(cubeView, longDate);
+		inputMonths.add(longDate);
+		document = CreateJsonFromXml(cubeView, inputMonths);
 		return new Greeting(counter.incrementAndGet(), String.format(template, document));
 		}
 	
 	@GetMapping("/getRange")
-	public Greeting getRange(@RequestParam String month) throws FileNotFoundException, JAXBException  {
+	public Greeting getRange(@RequestParam String fromMonth, String toMonth) throws FileNotFoundException, JAXBException  {
 		URL resource=this.getClass().getClassLoader().getResource(fileName);
 		JAXBContext jc = JAXBContext.newInstance(CubeView.class);
 		unmarshaller = jc.createUnmarshaller();
+		inputMonths = ComposedDate.getDatesRange(fromMonth, toMonth);
 		cubeView = (CubeView) unmarshaller.unmarshal(resource);
-		longDate = ComposedDate.YeartoYearMonth(month);
-		document = CreateJsonFromXml(cubeView, longDate);
+		document = CreateJsonFromXml(cubeView, inputMonths);
 		return new Greeting(counter.incrementAndGet(), String.format(template, document));
 		}
 	
-    private String CreateJsonFromXml(CubeView cubeView, String month) {
+    private String CreateJsonFromXml(CubeView cubeView, List<String> months) {
     	List<JSONDocument> docs;
     	docs = new ArrayList();
     	Gson gson;
@@ -83,22 +71,25 @@ public class GreetingController {
     	Row[] rowList;
     	rowList = cubeView.getData().getRows().getRow();
     	JSONDocument entry;    	
-    	for (int i=0; i<rowList.length; i++) {    		
-			if (rowList[i].getRowLabels().getRowLabel().getValue().equals(month)) {
-	    		entry = new JSONDocument();
-	    		entry.setYear(rowList[i].getRowLabels().getRowLabel().getValue());
-	    		entry.setResidentBorderes(rowList[i].getCells().getC()[0].getV());
-	    		entry.setNonResidentBorderes(rowList[i].getCells().getC()[1].getV());
-	    		entry.setNationalWageEarners(rowList[i].getCells().getC()[2].getV());
-	    		entry.setDomesticWageEarners(rowList[i].getCells().getC()[3].getV());
-	    		entry.setNationalSeflEmployment(rowList[i].getCells().getC()[4].getV());
-	    		entry.setDomesticSelfEmployment(rowList[i].getCells().getC()[5].getV());
-	    		entry.setNationalEmployment(rowList[i].getCells().getC()[6].getV());
-	    		entry.setDomesticEmployment(rowList[i].getCells().getC()[7].getV());
-	    		entry.setNumberUnemployed(rowList[i].getCells().getC()[8].getV());
-	    		entry.setActivePopulation(rowList[i].getCells().getC()[9].getV()); 
-	    		docs.add(entry);
-			}
+    	for (int i=0; i<rowList.length; i++) {
+    		for (int j=0; j<months.size(); j++) {
+    			if (rowList[i].getRowLabels().getRowLabel().getValue().contains(ComposedDate.YeartoYearMonth(months.get(j)))) {
+    	    		entry = new JSONDocument();
+    	    		entry.setYear(rowList[i].getRowLabels().getRowLabel().getValue());
+    	    		entry.setResidentBorderes(rowList[i].getCells().getC()[0].getV());
+    	    		entry.setNonResidentBorderes(rowList[i].getCells().getC()[1].getV());
+    	    		entry.setNationalWageEarners(rowList[i].getCells().getC()[2].getV());
+    	    		entry.setDomesticWageEarners(rowList[i].getCells().getC()[3].getV());
+    	    		entry.setNationalSeflEmployment(rowList[i].getCells().getC()[4].getV());
+    	    		entry.setDomesticSelfEmployment(rowList[i].getCells().getC()[5].getV());
+    	    		entry.setNationalEmployment(rowList[i].getCells().getC()[6].getV());
+    	    		entry.setDomesticEmployment(rowList[i].getCells().getC()[7].getV());
+    	    		entry.setNumberUnemployed(rowList[i].getCells().getC()[8].getV());
+    	    		entry.setActivePopulation(rowList[i].getCells().getC()[9].getV()); 
+    	    		docs.add(entry);
+    			}
+    		}
+
     	}	
     	result = gson.toJson(docs);
     	return result;
