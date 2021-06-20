@@ -4,6 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Spliterator;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import lu.uni.exercises.jakarta.xml.xmlComponents.CubeView;
+import lu.uni.exercises.jakarta.xml.xmlComponents.Row;
+
 public class ComposedDate {
 	
 	private String inputDate;
@@ -166,5 +172,59 @@ public class ComposedDate {
 		return splidate;
 		
 	}
+	
+    public static JSONDocument CreateJsonFromXmlCombined(CubeView cubeView, List<String> months) {
+    	List<JSONDocument> docs;
+    	docs = new ArrayList();
+    	JSONDocument doc = new JSONDocument();
+    	Row[] rowList;
+    	rowList = cubeView.getData().getRows().getRow();
+    	JSONDocument entry;    	
+    	for (int i=0; i<rowList.length; i++) {
+    		for (int j=0; j<months.size(); j++) {
+    			if (rowList[i].getRowLabels().getRowLabel().getValue().contains(ComposedDate.YeartoYearMonth(months.get(j)))) {
+    	    		entry = new JSONDocument();
+    	    		entry.setYear(rowList[i].getRowLabels().getRowLabel().getValue());
+    	    		entry.setResidentBorderes((int) Double.parseDouble(rowList[i].getCells().getC()[0].getV()));
+    	    		entry.setNonResidentBorderes((int) Double.parseDouble(rowList[i].getCells().getC()[1].getV()));
+    	    		entry.setNationalWageEarners((int) Double.parseDouble(rowList[i].getCells().getC()[2].getV()));
+    	    		entry.setDomesticWageEarners((int) Double.parseDouble(rowList[i].getCells().getC()[3].getV()));
+    	    		entry.setNationalSeflEmployment((int) Double.parseDouble(rowList[i].getCells().getC()[4].getV()));
+    	    		entry.setDomesticSelfEmployment((int) Double.parseDouble(rowList[i].getCells().getC()[5].getV()));
+    	    		entry.setNationalEmployment((int) Double.parseDouble(rowList[i].getCells().getC()[6].getV()));
+    	    		entry.setDomesticEmployment((int) Double.parseDouble(rowList[i].getCells().getC()[7].getV()));
+    	    		entry.setNumberUnemployed((int) Double.parseDouble(rowList[i].getCells().getC()[8].getV()));
+    	    		entry.setActivePopulation((int) Double.parseDouble(rowList[i].getCells().getC()[9].getV())); 
+    	    		docs.add(entry);
+    			}
+    		}
+
+    	}
+    	
+    	doc = CombineMontlyData(docs);
+    	// Invoke CombineMontlyData
+    	
+    	return doc;
+    }
+    
+    private static JSONDocument CombineMontlyData(List<JSONDocument> docs) {
+    	JSONDocument finalDocument = new JSONDocument();
+    	finalDocument.setResidentBorderes(docs.get(docs.size() -1).getResidentBorderes() - docs.get(0).getResidentBorderes());
+    	finalDocument.setNonResidentBorderes(docs.get(docs.size() -1).getNonResidentBorderes() - docs.get(0).getNonResidentBorderes());
+    	finalDocument.setNationalWageEarners(docs.get(docs.size() -1).getNationalWageEarners() - docs.get(0).getNationalWageEarners());
+    	finalDocument.setDomesticWageEarners(docs.get(docs.size() -1).getDomesticWageEarners() - docs.get(0).getDomesticWageEarners()) ;
+    	finalDocument.setNationalSeflEmployment(docs.get(docs.size() -1).getNationalSeflEmployment() - docs.get(0).getNationalSeflEmployment());
+    	finalDocument.setDomesticSelfEmployment(docs.get(docs.size() -1).getDomesticSelfEmployment() - docs.get(0).getDomesticSelfEmployment());
+    	finalDocument.setNationalEmployment(docs.get(docs.size() -1).getNationalEmployment() - docs.get(0).getNationalEmployment());
+    	finalDocument.setDomesticEmployment(docs.get(docs.size() -1).getDomesticEmployment() - docs.get(0).getDomesticEmployment());
+    	finalDocument.setNumberUnemployed(docs.get(docs.size() -1).getNumberUnemployed() - docs.get(0).getNumberUnemployed());
+    	finalDocument.setActivePopulation(docs.get(docs.size() -1).getActivePopulation() - docs.get(0).getActivePopulation());   	
+
+    	return finalDocument;
+    }
+	
+	
+	
+
 
 }

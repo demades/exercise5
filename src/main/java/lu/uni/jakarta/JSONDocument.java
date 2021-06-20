@@ -2,9 +2,9 @@ package lu.uni.jakarta;
 
 public class JSONDocument {
 	
-	private String residentBorderes, nonResidentBorderes, nationalWageEarners, domesticWageEarners;
-	private String nationalSeflEmployment, domesticSelfEmployment, nationalEmployment, domesticEmployment;
-	private String numberUnemployed, activePopulation;
+	private int residentBorderes, nonResidentBorderes, nationalWageEarners, domesticWageEarners;
+	private int nationalSeflEmployment, domesticSelfEmployment, nationalEmployment, domesticEmployment;
+	private int numberUnemployed, activePopulation;
 	private String year;
 	
 	
@@ -17,7 +17,7 @@ public class JSONDocument {
 
 
 
-	public String getResidentBorderes() {
+	public int getResidentBorderes() {
 		return residentBorderes;
 	}
 
@@ -25,7 +25,7 @@ public class JSONDocument {
 
 
 
-	public void setResidentBorderes(String residentBorderes) {
+	public void setResidentBorderes(int residentBorderes) {
 		this.residentBorderes = residentBorderes;
 	}
 
@@ -33,7 +33,7 @@ public class JSONDocument {
 
 
 
-	public String getNonResidentBorderes() {
+	public int getNonResidentBorderes() {
 		return nonResidentBorderes;
 	}
 
@@ -41,7 +41,7 @@ public class JSONDocument {
 
 
 
-	public void setNonResidentBorderes(String nonResidentBorderes) {
+	public void setNonResidentBorderes(int nonResidentBorderes) {
 		this.nonResidentBorderes = nonResidentBorderes;
 	}
 
@@ -49,7 +49,7 @@ public class JSONDocument {
 
 
 
-	public String getNationalWageEarners() {
+	public int getNationalWageEarners() {
 		return nationalWageEarners;
 	}
 
@@ -57,7 +57,7 @@ public class JSONDocument {
 
 
 
-	public void setNationalWageEarners(String nationalWageEarners) {
+	public void setNationalWageEarners(int nationalWageEarners) {
 		this.nationalWageEarners = nationalWageEarners;
 	}
 
@@ -65,7 +65,7 @@ public class JSONDocument {
 
 
 
-	public String getDomesticWageEarners() {
+	public int getDomesticWageEarners() {
 		return domesticWageEarners;
 	}
 
@@ -73,7 +73,7 @@ public class JSONDocument {
 
 
 
-	public void setDomesticWageEarners(String domesticWageEarners) {
+	public void setDomesticWageEarners(int domesticWageEarners) {
 		this.domesticWageEarners = domesticWageEarners;
 	}
 
@@ -81,7 +81,7 @@ public class JSONDocument {
 
 
 
-	public String getNationalSeflEmployment() {
+	public int getNationalSeflEmployment() {
 		return nationalSeflEmployment;
 	}
 
@@ -89,7 +89,7 @@ public class JSONDocument {
 
 
 
-	public void setNationalSeflEmployment(String nationalSeflEmployment) {
+	public void setNationalSeflEmployment(int nationalSeflEmployment) {
 		this.nationalSeflEmployment = nationalSeflEmployment;
 	}
 
@@ -97,7 +97,7 @@ public class JSONDocument {
 
 
 
-	public String getDomesticSelfEmployment() {
+	public int getDomesticSelfEmployment() {
 		return domesticSelfEmployment;
 	}
 
@@ -105,7 +105,7 @@ public class JSONDocument {
 
 
 
-	public void setDomesticSelfEmployment(String domesticSelfEmployment) {
+	public void setDomesticSelfEmployment(int domesticSelfEmployment) {
 		this.domesticSelfEmployment = domesticSelfEmployment;
 	}
 
@@ -113,7 +113,7 @@ public class JSONDocument {
 
 
 
-	public String getNationalEmployment() {
+	public int getNationalEmployment() {
 		return nationalEmployment;
 	}
 
@@ -121,7 +121,7 @@ public class JSONDocument {
 
 
 
-	public void setNationalEmployment(String nationalEmployment) {
+	public void setNationalEmployment(int nationalEmployment) {
 		this.nationalEmployment = nationalEmployment;
 	}
 
@@ -129,7 +129,7 @@ public class JSONDocument {
 
 
 
-	public String getDomesticEmployment() {
+	public int getDomesticEmployment() {
 		return domesticEmployment;
 	}
 
@@ -137,7 +137,7 @@ public class JSONDocument {
 
 
 
-	public void setDomesticEmployment(String domesticEmployment) {
+	public void setDomesticEmployment(int domesticEmployment) {
 		this.domesticEmployment = domesticEmployment;
 	}
 
@@ -145,7 +145,7 @@ public class JSONDocument {
 
 
 
-	public String getNumberUnemployed() {
+	public int getNumberUnemployed() {
 		return numberUnemployed;
 	}
 
@@ -153,7 +153,7 @@ public class JSONDocument {
 
 
 
-	public void setNumberUnemployed(String numberUnemployed) {
+	public void setNumberUnemployed(int numberUnemployed) {
 		this.numberUnemployed = numberUnemployed;
 	}
 
@@ -161,7 +161,7 @@ public class JSONDocument {
 
 
 
-	public String getActivePopulation() {
+	public int getActivePopulation() {
 		return activePopulation;
 	}
 
@@ -169,7 +169,7 @@ public class JSONDocument {
 
 
 
-	public void setActivePopulation(String activePopulation) {
+	public void setActivePopulation(int activePopulation) {
 		this.activePopulation = activePopulation;
 	}
 

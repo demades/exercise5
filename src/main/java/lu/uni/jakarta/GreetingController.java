@@ -33,7 +33,7 @@ public class GreetingController {
 	private String[] years;
 	private List<String> inputMonths;
 	private String fileName = "statec.xml";
-	private List<JSONDocument> doc;
+	private JSONDocument doc;
     private Unmarshaller unmarshaller;
     private File f;
     private String longDate, month;
@@ -42,6 +42,7 @@ public class GreetingController {
 
 	@GetMapping("/getByMonth")
 	public Greeting getByMonth(@RequestParam String month) throws FileNotFoundException, JAXBException  {
+		inputMonths = new ArrayList();
 		URL resource=this.getClass().getClassLoader().getResource(fileName);
 		JAXBContext jc = JAXBContext.newInstance(CubeView.class);
 		unmarshaller = jc.createUnmarshaller();
@@ -63,6 +64,20 @@ public class GreetingController {
 		return new Greeting(counter.incrementAndGet(), String.format(template, document));
 		}
 	
+	@GetMapping("/getVariation")
+	public Greeting getVariation(@RequestParam String fromMonth, String toMonth) throws FileNotFoundException, JAXBException  {
+		URL resource=this.getClass().getClassLoader().getResource(fileName);
+		JAXBContext jc = JAXBContext.newInstance(CubeView.class);
+		unmarshaller = jc.createUnmarshaller();
+		inputMonths = ComposedDate.getDatesRange(fromMonth, toMonth);
+		cubeView = (CubeView) unmarshaller.unmarshal(resource);
+		doc = ComposedDate.CreateJsonFromXmlCombined(cubeView, inputMonths);
+		Gson gson;
+    	gson = new GsonBuilder().setPrettyPrinting().create();
+    	document = gson.toJson(doc);
+		return new Greeting(counter.incrementAndGet(), String.format(template, document));
+		}
+	
     private String CreateJsonFromXml(CubeView cubeView, List<String> months) {
     	List<JSONDocument> docs;
     	docs = new ArrayList();
@@ -76,23 +91,22 @@ public class GreetingController {
     			if (rowList[i].getRowLabels().getRowLabel().getValue().contains(ComposedDate.YeartoYearMonth(months.get(j)))) {
     	    		entry = new JSONDocument();
     	    		entry.setYear(rowList[i].getRowLabels().getRowLabel().getValue());
-    	    		entry.setResidentBorderes(rowList[i].getCells().getC()[0].getV());
-    	    		entry.setNonResidentBorderes(rowList[i].getCells().getC()[1].getV());
-    	    		entry.setNationalWageEarners(rowList[i].getCells().getC()[2].getV());
-    	    		entry.setDomesticWageEarners(rowList[i].getCells().getC()[3].getV());
-    	    		entry.setNationalSeflEmployment(rowList[i].getCells().getC()[4].getV());
-    	    		entry.setDomesticSelfEmployment(rowList[i].getCells().getC()[5].getV());
-    	    		entry.setNationalEmployment(rowList[i].getCells().getC()[6].getV());
-    	    		entry.setDomesticEmployment(rowList[i].getCells().getC()[7].getV());
-    	    		entry.setNumberUnemployed(rowList[i].getCells().getC()[8].getV());
-    	    		entry.setActivePopulation(rowList[i].getCells().getC()[9].getV()); 
+    	    		entry.setResidentBorderes((int) Double.parseDouble(rowList[i].getCells().getC()[0].getV()));
+    	    		entry.setNonResidentBorderes((int) Double.parseDouble(rowList[i].getCells().getC()[1].getV()));
+    	    		entry.setNationalWageEarners((int) Double.parseDouble(rowList[i].getCells().getC()[2].getV()));
+    	    		entry.setDomesticWageEarners((int) Double.parseDouble(rowList[i].getCells().getC()[3].getV()));
+    	    		entry.setNationalSeflEmployment((int) Double.parseDouble(rowList[i].getCells().getC()[4].getV()));
+    	    		entry.setDomesticSelfEmployment((int) Double.parseDouble(rowList[i].getCells().getC()[5].getV()));
+    	    		entry.setNationalEmployment((int) Double.parseDouble(rowList[i].getCells().getC()[6].getV()));
+    	    		entry.setDomesticEmployment((int) Double.parseDouble(rowList[i].getCells().getC()[7].getV()));
+    	    		entry.setNumberUnemployed((int) Double.parseDouble(rowList[i].getCells().getC()[8].getV()));
+    	    		entry.setActivePopulation((int) Double.parseDouble(rowList[i].getCells().getC()[9].getV())); 
     	    		docs.add(entry);
     			}
     		}
 
     	}	
-    	result = gson.toJson(docs);
-    	return result;
+    	return gson.toJson(docs);
     }
 
 }
