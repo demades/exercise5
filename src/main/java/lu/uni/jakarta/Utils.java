@@ -10,19 +10,21 @@ import com.google.gson.GsonBuilder;
 import lu.uni.exercises.jakarta.xml.xmlComponents.CubeView;
 import lu.uni.exercises.jakarta.xml.xmlComponents.Row;
 
-public class ComposedDate {
+public class Utils {
 	
 	private String inputDate;
 	private static String outputDate;
-	private String[] dateParts;
 	public List<String> dates;
+	private static JSONDocument entry;
 	private static List<Integer> splidate;
 
-	public ComposedDate(String inputDate) {
+	public Utils(String inputDate) {
 		super();
 		this.inputDate = inputDate;
 	}
 	
+	
+	// Method to convert from a format of YYYYMM to "Month_name YYYY"
 	public static String YeartoYearMonth(String input) {
 		String year = "";
 		String month = "";
@@ -136,7 +138,7 @@ public class ComposedDate {
 		return outputDate;
 		
 	}
-	
+	// Returns an array with the list of months for a couple of fromDate / toDate
 	public static List<String> getDatesRange(String fromDate, String toDate){
 		List<String> dates = new ArrayList();
 		List<Integer> fromDateArray = new ArrayList();
@@ -158,6 +160,7 @@ public class ComposedDate {
 		return dates;
 	}
 	
+	// Split an input YYYYMM to an Integer array with two entries (year / month) 
 	private static List<Integer> splitYearMonth(String date){
 		splidate = new ArrayList();
 		char[] tempYear = new char[4];
@@ -173,6 +176,7 @@ public class ComposedDate {
 		
 	}
 	
+	// create JSON with the information combined of two dates.
     public static JSONDocument CreateJsonFromXmlCombined(CubeView cubeView, List<String> months) {
     	List<JSONDocument> docs;
     	docs = new ArrayList();
@@ -182,7 +186,7 @@ public class ComposedDate {
     	JSONDocument entry;    	
     	for (int i=0; i<rowList.length; i++) {
     		for (int j=0; j<months.size(); j++) {
-    			if (rowList[i].getRowLabels().getRowLabel().getValue().contains(ComposedDate.YeartoYearMonth(months.get(j)))) {
+    			if (rowList[i].getRowLabels().getRowLabel().getValue().contains(Utils.YeartoYearMonth(months.get(j)))) {
     	    		entry = new JSONDocument();
     	    		entry.setYear(rowList[i].getRowLabels().getRowLabel().getValue());
     	    		entry.setResidentBorderes((int) Double.parseDouble(rowList[i].getCells().getC()[0].getV()));
@@ -201,12 +205,12 @@ public class ComposedDate {
 
     	}
     	
-    	doc = CombineMontlyData(docs);
-    	// Invoke CombineMontlyData
-    	
+    	doc = CombineMontlyData(docs); 	
     	return doc;
     }
     
+    
+    // create a json array with the difference of two months.
     private static JSONDocument CombineMontlyData(List<JSONDocument> docs) {
     	JSONDocument finalDocument = new JSONDocument();
     	finalDocument.setResidentBorderes(docs.get(docs.size() -1).getResidentBorderes() - docs.get(0).getResidentBorderes());
@@ -222,9 +226,32 @@ public class ComposedDate {
 
     	return finalDocument;
     }
-	
-	
-	
+    
+    //Create a json file with the employment values for a given day
+    protected static String CreateJsonFromXml(CubeView cubeView, List<String> months) {
+    	List<JSONDocument> docs = new ArrayList();
+    	Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    	Row[] rowList = cubeView.getData().getRows().getRow();
+    	for (int i=0; i<rowList.length; i++) {
+    		for (int j=0; j<months.size(); j++) {
+    			if (rowList[i].getRowLabels().getRowLabel().getValue().contains(Utils.YeartoYearMonth(months.get(j)))) {
+    	    		entry = new JSONDocument();
+    	    		entry.setYear(rowList[i].getRowLabels().getRowLabel().getValue());
+    	    		entry.setResidentBorderes((int) Double.parseDouble(rowList[i].getCells().getC()[0].getV()));
+    	    		entry.setNonResidentBorderes((int) Double.parseDouble(rowList[i].getCells().getC()[1].getV()));
+    	    		entry.setNationalWageEarners((int) Double.parseDouble(rowList[i].getCells().getC()[2].getV()));
+    	    		entry.setDomesticWageEarners((int) Double.parseDouble(rowList[i].getCells().getC()[3].getV()));
+    	    		entry.setNationalSeflEmployment((int) Double.parseDouble(rowList[i].getCells().getC()[4].getV()));
+    	    		entry.setDomesticSelfEmployment((int) Double.parseDouble(rowList[i].getCells().getC()[5].getV()));
+    	    		entry.setNationalEmployment((int) Double.parseDouble(rowList[i].getCells().getC()[6].getV()));
+    	    		entry.setDomesticEmployment((int) Double.parseDouble(rowList[i].getCells().getC()[7].getV()));
+    	    		entry.setNumberUnemployed((int) Double.parseDouble(rowList[i].getCells().getC()[8].getV()));
+    	    		entry.setActivePopulation((int) Double.parseDouble(rowList[i].getCells().getC()[9].getV())); 
+    	    		docs.add(entry);
+    			}
+    		}
 
-
+    	}	
+    	return gson.toJson(docs);
+    }
 }

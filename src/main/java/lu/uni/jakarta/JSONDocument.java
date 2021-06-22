@@ -1,12 +1,15 @@
 package lu.uni.jakarta;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel(description = "Details of the JSON response for Employment data in Luxembourg")
 public class JSONDocument {
 	
 	private int residentBorderes, nonResidentBorderes, nationalWageEarners, domesticWageEarners;
 	private int nationalSeflEmployment, domesticSelfEmployment, nationalEmployment, domesticEmployment;
 	private int numberUnemployed, activePopulation;
 	private String year;
-	
 	
 	public JSONDocument() {
 		super();
@@ -16,11 +19,10 @@ public class JSONDocument {
 
 
 
-
+	@ApiModelProperty(notes = "number of Resident Borderes working in Luxembourg")
 	public int getResidentBorderes() {
 		return residentBorderes;
 	}
-
 
 
 
@@ -32,7 +34,7 @@ public class JSONDocument {
 
 
 
-
+	@ApiModelProperty(notes = "number of NON Resident Borderes working in Luxembourg")
 	public int getNonResidentBorderes() {
 		return nonResidentBorderes;
 	}
@@ -48,7 +50,7 @@ public class JSONDocument {
 
 
 
-
+	@ApiModelProperty(notes = "number of National Ware Earners working in Luxembourg")
 	public int getNationalWageEarners() {
 		return nationalWageEarners;
 	}
