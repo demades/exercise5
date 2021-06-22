@@ -26,14 +26,12 @@ import lu.uni.exercises.jakarta.xml.xmlComponents.Row;
 @RestController
 public class AppController {
 	
-	private static final String template = "Hello, %s!";
-	private final AtomicLong counter = new AtomicLong();
 	private String output, path, result, document;
 	private CubeView cubeView;
 	private String[] years;
 	private List<String> inputMonths;
 	private String fileName = "statec.xml";
-	private JSONDocument doc;
+	private JSONDocument doc, entry;
     private Unmarshaller unmarshaller;
     private File f;
     private String longDate, month;
@@ -47,8 +45,7 @@ public class AppController {
 		JAXBContext jc = JAXBContext.newInstance(CubeView.class);
 		unmarshaller = jc.createUnmarshaller();
 		cubeView = (CubeView) unmarshaller.unmarshal(resource);
-		longDate = ComposedDate.YeartoYearMonth(month);
-		inputMonths.add(longDate);
+		inputMonths.add(month);
 		document = CreateJsonFromXml(cubeView, inputMonths);
 		return document;
 		}
@@ -82,7 +79,6 @@ public class AppController {
     	List<JSONDocument> docs = new ArrayList();
     	Gson gson = new GsonBuilder().setPrettyPrinting().create();
     	Row[] rowList = cubeView.getData().getRows().getRow();
-    	JSONDocument entry;    	
     	for (int i=0; i<rowList.length; i++) {
     		for (int j=0; j<months.size(); j++) {
     			if (rowList[i].getRowLabels().getRowLabel().getValue().contains(ComposedDate.YeartoYearMonth(months.get(j)))) {
