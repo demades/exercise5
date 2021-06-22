@@ -24,7 +24,7 @@ import lu.uni.exercises.jakarta.xml.xmlComponents.CubeView;
 import lu.uni.exercises.jakarta.xml.xmlComponents.Row;
 
 @RestController
-public class GreetingController {
+public class AppController {
 	
 	private static final String template = "Hello, %s!";
 	private final AtomicLong counter = new AtomicLong();
@@ -41,7 +41,7 @@ public class GreetingController {
 	
 
 	@GetMapping("/getByMonth")
-	public Greeting getByMonth(@RequestParam String month) throws FileNotFoundException, JAXBException  {
+	public String getByMonth(@RequestParam String month) throws FileNotFoundException, JAXBException  {
 		inputMonths = new ArrayList();
 		URL resource=this.getClass().getClassLoader().getResource(fileName);
 		JAXBContext jc = JAXBContext.newInstance(CubeView.class);
@@ -50,22 +50,22 @@ public class GreetingController {
 		longDate = ComposedDate.YeartoYearMonth(month);
 		inputMonths.add(longDate);
 		document = CreateJsonFromXml(cubeView, inputMonths);
-		return new Greeting(counter.incrementAndGet(), String.format(template, document));
+		return document;
 		}
 	
 	@GetMapping("/getRange")
-	public Greeting getRange(@RequestParam String fromMonth, String toMonth) throws FileNotFoundException, JAXBException  {
+	public String getRange(@RequestParam String fromMonth, String toMonth) throws FileNotFoundException, JAXBException  {
 		URL resource=this.getClass().getClassLoader().getResource(fileName);
 		JAXBContext jc = JAXBContext.newInstance(CubeView.class);
 		unmarshaller = jc.createUnmarshaller();
 		inputMonths = ComposedDate.getDatesRange(fromMonth, toMonth);
 		cubeView = (CubeView) unmarshaller.unmarshal(resource);
 		document = CreateJsonFromXml(cubeView, inputMonths);
-		return new Greeting(counter.incrementAndGet(), String.format(template, document));
+		return document;
 		}
 	
 	@GetMapping("/getVariation")
-	public Greeting getVariation(@RequestParam String fromMonth, String toMonth) throws FileNotFoundException, JAXBException  {
+	public JSONDocument getVariation(@RequestParam String fromMonth, String toMonth) throws FileNotFoundException, JAXBException  {
 		URL resource=this.getClass().getClassLoader().getResource(fileName);
 		JAXBContext jc = JAXBContext.newInstance(CubeView.class);
 		unmarshaller = jc.createUnmarshaller();
@@ -75,16 +75,13 @@ public class GreetingController {
 		Gson gson;
     	gson = new GsonBuilder().setPrettyPrinting().create();
     	document = gson.toJson(doc);
-		return new Greeting(counter.incrementAndGet(), String.format(template, document));
+		return doc;
 		}
 	
     private String CreateJsonFromXml(CubeView cubeView, List<String> months) {
-    	List<JSONDocument> docs;
-    	docs = new ArrayList();
-    	Gson gson;
-    	gson = new GsonBuilder().setPrettyPrinting().create();
-    	Row[] rowList;
-    	rowList = cubeView.getData().getRows().getRow();
+    	List<JSONDocument> docs = new ArrayList();
+    	Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    	Row[] rowList = cubeView.getData().getRows().getRow();
     	JSONDocument entry;    	
     	for (int i=0; i<rowList.length; i++) {
     		for (int j=0; j<months.size(); j++) {
